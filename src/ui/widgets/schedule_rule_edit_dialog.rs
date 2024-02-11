@@ -50,6 +50,10 @@ mod imp {
         #[template_child]
         pub post_prune_entry: TemplateChild<gtk::Entry>,
         #[template_child]
+        pub snapshot_on_battery_switch: TemplateChild<gtk::Switch>,
+        #[template_child]
+        pub prune_on_battery_switch: TemplateChild<gtk::Switch>,
+        #[template_child]
         pub remove_group: TemplateChild<adw::PreferencesGroup>,
         #[template_child]
         pub stack: TemplateChild<gtk::Stack>,
@@ -126,6 +130,8 @@ mod imp {
                         self.post_snapshot_entry.set_text(rule.post_snapshot.as_str().as_ref());
                         self.pre_prune_entry.set_text(rule.pre_prune.as_str().as_ref());
                         self.post_prune_entry.set_text(rule.post_prune.as_str().as_ref());
+                        self.snapshot_on_battery_switch.set_active(rule.snapshot_on_battery);
+                        self.prune_on_battery_switch.set_active(rule.prune_on_battery);
                     } else {
                         self.hourly_cell.set_value(24.0);
                         self.daily_cell.set_value(30.0);
@@ -134,6 +140,8 @@ mod imp {
                         self.post_snapshot_entry.set_text("");
                         self.pre_prune_entry.set_text("");
                         self.post_prune_entry.set_text("");
+                        self.snapshot_on_battery_switch.set_active(true);
+                        self.prune_on_battery_switch.set_active(true);
                     }
                 }
                 _ => unimplemented!(),
@@ -239,6 +247,8 @@ impl ScheduleRuleEditDialog {
         new_rule.post_snapshot = imp.post_snapshot_entry.text().into();
         new_rule.pre_prune = imp.pre_prune_entry.text().into();
         new_rule.post_prune = imp.post_prune_entry.text().into();
+        new_rule.snapshot_on_battery = imp.snapshot_on_battery_switch.is_active();
+        new_rule.prune_on_battery = imp.prune_on_battery_switch.is_active();
 
         let res = if let Some(original) = imp.original.get() {
             store.update_rule(original.inner(), &new_rule)
